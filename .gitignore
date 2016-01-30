@@ -1,0 +1,8 @@
+# Dependency directory
+Tasker.egg-info/
+
+# other
+.tmp
+*.ds
+*.pyc
+.venv
