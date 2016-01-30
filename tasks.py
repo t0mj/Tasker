@@ -1,3 +1,7 @@
+"""
+A python app to manage daily tasks and track them over time
+Author: Thomas Johns @t0mj
+"""
 import click
 import datetime
 import os
