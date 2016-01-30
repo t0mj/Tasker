@@ -2,6 +2,7 @@
 Manage your daily tasks via CLI.
 
 **Commands:**
+_task_
 -  _add_
   - Add a new task to todays list.
 -  _browse_
@@ -15,3 +16,8 @@ Manage your daily tasks via CLI.
 
 ## Install
 Clone the directory and run `pip install .`
+
+## Examples:
+**Adding and removing tasks.**
+
+**Adding task with link and browsing.**

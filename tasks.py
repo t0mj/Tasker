@@ -74,7 +74,7 @@ def cli(ctx):
 
 @cli.command()
 @click.argument('task_title', nargs=-1, required=True)
-@click.option('--link', '-l', default=TODAY,
+@click.option('--link', '-l', default=None,
               help='Attach a link to your task.  Open with: task browse')
 @pass_tasker
 def add(tasker, task_title, link):
