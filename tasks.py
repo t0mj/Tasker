@@ -13,7 +13,7 @@ DIR = os.path.expanduser('~/.tasker')
 DATA_FILE = os.path.join(DIR, 'task_data.yml')
 TODAY = datetime.date.today()
 BOX = lambda checked: u"\u2705" if checked else u"\u25FB\uFE0F"
-CYAN = lambda txt: click.echo(click.style(txt, fg='cyan', bold=True))
+CYAN = lambda txt: click.echo(click.style(txt, fg='cyan'))
 GREEN = lambda txt: click.echo(click.style(txt, fg='green', bold=True))
 RED = lambda txt: click.echo(click.style(txt, fg='red', bold=True))
 YELLOW = lambda txt: click.echo(click.style(txt, fg='yellow', bold=True))
