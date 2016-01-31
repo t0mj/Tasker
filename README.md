@@ -1,6 +1,10 @@
 ## Tasker
 Manage your daily tasks via CLI.
 
+<img width="446" alt="Example of Tasker with strikethrough" src="https://cloud.githubusercontent.com/assets/7049067/12701187/d7bf58d6-c7c6-11e5-8e27-bbfc4f8ecc2e.png">
+
+*_Strikethrough support is new and not shown in below examples_
+
 **Commands:**
 
 _task_
