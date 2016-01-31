@@ -19,10 +19,12 @@ DATA_FILE = os.path.join(DIR, 'task_data.yml')
 TODAY = datetime.date.today()
 # Output colors
 BOX = lambda checked: u"\u2705" if checked else u"\u25FB\uFE0F"
-CYAN = lambda txt: click.echo(click.style(txt, fg='cyan'))
-GREEN = lambda txt: click.echo(click.style(txt, fg='green', bold=True))
-RED = lambda txt: click.echo(click.style(txt, fg='red', bold=True))
-YELLOW = lambda txt: click.echo(click.style(txt, fg='yellow', bold=True))
+CYAN = lambda txt: click.secho(txt, fg='cyan')
+GREEN = lambda txt: click.secho(txt, fg='green', bold=True)
+RED = lambda txt: click.secho(txt, fg='red', bold=True)
+STRIKE = lambda txt, checked: ''.join([u'{}\u0336'.format(c).encode('utf-8')
+                                       for c in txt]) if checked else txt
+YELLOW = lambda txt: click.secho(txt, fg='yellow', bold=True)
 
 
 class Tasker(object):
@@ -175,9 +177,10 @@ def ls(tasker, all_tasks, task_date, week, month):
         click.echo()
         YELLOW('Tasks for {}:'.format(task_date))
         for idx, task in enumerate(data):
+            complete = task['complete']
             output_str = ('{}  {}. {}'
-                          .format(BOX(task['complete']).encode('utf-8'),
-                                  idx, task['title']))
+                          .format(BOX(complete).encode('utf-8'),
+                                  idx, STRIKE(task['title'], complete)))
             if task.get('link'):
                 CYAN(output_str)
             else:
