@@ -183,9 +183,11 @@ def ls(tasker, all_tasks, task_date, week, month):
         for idx, task in enumerate(task_list):
             complete = task['complete']
             extra_space = ' ' if len(task_list) > 10 and idx < 10 else ''
-            output_str = ('{}  {}. {}{}'
-                          .format(BOX(complete).encode('utf-8'), idx,
-                                  extra_space, STRIKE(task['title'], complete)))
+            output_str = ('{}  {}. {}{}'.format(BOX(complete).encode('utf-8'),
+                                                idx,
+                                                extra_space,
+                                                STRIKE(task['title'],
+                                                complete)))
             if task.get('link'):
                 CYAN(output_str)
             else:
@@ -196,24 +198,45 @@ def ls(tasker, all_tasks, task_date, week, month):
 @click.argument('task_args', nargs=-1, required=True)
 @click.option('--task_date', '-d', default=TODAY,
               help='Pass a task date, defaults to today.')
+@click.option('--move_date', '-m', default=None,
+              help='The date to move your task to, defaults to today.')
 @pass_tasker
-def mv(tasker, task_args, task_date):
+def mv(tasker, task_args, task_date, move_date):
     """
     Move a task for the passed index.\n
     Pass a list in the order you want tasks to completely reorganize.\n
     Examples:\n
     task mv 1 up\n
     task mv 3 down\n
-    task mv 2, 0, 3, 4, 1
+    task mv 2, 0, 3, 4, 1\n\n
+    Move a task from one date to another:\n
+    task mv 7 -d 2016-01-30 -m 2016-02-02\n
+    Move a task from a date to today\n
+    task mv 4 -d 2016-01-30
     """
     directions = {'up': -1, 'down': 1}
-    if len(task_args) == 1:
-        RED('You must give a direction or an order of how you want the tasks.')
-        return
+    if len(task_args) == 1 and not move_date:
+        if task_date != TODAY:
+            # We're moving a task from a date to today
+            move_date = TODAY
+        else:
+            RED('You must give a direction or an order of your tasks.')
+            return
     daily_tasks = tasker.daily_tasks(task_date)
     if daily_tasks:
         dt_copy = list(daily_tasks)
-        if task_args[1] in directions.keys():
+        if move_date:
+            if type(move_date) != datetime.date:
+                move_date = parse(move_date).date()
+            # Get new dates tasks, append, and remove old dates task.
+            task_idx = int(task_args[0])
+            move_date_tasks = tasker.daily_tasks(move_date)
+            move_date_tasks.append(daily_tasks[task_idx])
+            daily_tasks.pop(task_idx)
+            GREEN('{} task {} has been moved to {}.'.format(task_date,
+                                                            task_idx,
+                                                            move_date))
+        elif task_args[1] in directions.keys():
             # Find index of where we're moving and overwrite with copied values
             task_idx = int(task_args[0])
             new_loc_idx = task_idx + directions[task_args[1]]
@@ -241,6 +264,8 @@ def mv(tasker, task_args, task_date):
                 for idx, val in enumerate(task_args):
                     daily_tasks[idx] = dt_copy[int(val)]
                 GREEN('Tasks have been reordered.')
+            else:
+                RED('Invalid order or missing task number.')
         tasker.sort_dict(tasker.task_data)
         tasker.write_data()
 
