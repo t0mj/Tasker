@@ -86,17 +86,21 @@ def cli(ctx):
 @click.argument('task_title', nargs=-1, required=True)
 @click.option('--link', '-l', default=None,
               help='Attach a link to your task.  Open with: task browse')
+@click.option('--task_date', '-d', default=TODAY,
+              help='Pass a task date, defaults to today.')
 @pass_tasker
-def add(tasker, task_title, link):
+def add(tasker, task_title, link, task_date):
     """
     Add a new task to todays list.\n
     ex: task add Respond to meanface Sue's email
     """
-    tasker.task_data.setdefault(TODAY, [])
+    if type(task_date) != datetime.date:
+        task_date = parse(task_date).date()
+    tasker.task_data.setdefault(task_date, [])
     task_dict = {'title': ' '.join(task_title), 'complete': False}
     if link:
         task_dict['link'] = link
-    tasker.task_data[TODAY].append(task_dict)
+    tasker.task_data[task_date].append(task_dict)
     tasker.sort_dict(tasker.task_data)
     tasker.write_data()
     GREEN('Task added.')
