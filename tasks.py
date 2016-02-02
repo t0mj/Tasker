@@ -51,13 +51,13 @@ class Tasker(object):
     def query_data(self, query_type):
         start_date = TODAY - relativedelta(days=7)
         query_data = {}
-        for task_date, data in self.task_data.iteritems():
+        for task_date, task_list in self.task_data.iteritems():
             if query_type == 'weekly':
                 if task_date <= TODAY and task_date >= start_date:
-                    query_data[task_date] = data
+                    query_data[task_date] = task_list
             elif query_type == 'monthly':
                 if task_date.month == TODAY.month:
-                    query_data[task_date] = data
+                    query_data[task_date] = task_list
         return self.sort_dict(query_data)
 
     def sort_dict(self, adict):
@@ -168,23 +168,24 @@ def ls(tasker, all_tasks, task_date, week, month):
     Ex: task open 3
     """
     if all_tasks:
-        task_list = tasker.task_data
+        task_dict = tasker.task_data
     elif week:
-        task_list = tasker.query_data('weekly')
+        task_dict = tasker.query_data('weekly')
     elif month:
-        task_list = tasker.query_data('monthly')
+        task_dict = tasker.query_data('monthly')
     else:
-        task_list = {task_date: tasker.daily_tasks(task_date)}
-    for task_date, data in task_list.iteritems():
-        if not data:
+        task_dict = {task_date: tasker.daily_tasks(task_date)}
+    for task_date, task_list in task_dict.iteritems():
+        if not task_list:
             continue
         click.echo()
         YELLOW('Tasks for {}:'.format(task_date))
-        for idx, task in enumerate(data):
+        for idx, task in enumerate(task_list):
             complete = task['complete']
-            output_str = ('{}  {}. {}'
-                          .format(BOX(complete).encode('utf-8'),
-                                  idx, STRIKE(task['title'], complete)))
+            extra_space = ' ' if len(task_list) > 10 and idx < 10 else ''
+            output_str = ('{}  {}. {}{}'
+                          .format(BOX(complete).encode('utf-8'), idx,
+                                  extra_space, STRIKE(task['title'], complete)))
             if task.get('link'):
                 CYAN(output_str)
             else:
