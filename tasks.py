@@ -72,7 +72,7 @@ pass_tasker = click.make_pass_decorator(Tasker)
 
 
 @click.group()
-@click.version_option('1.2')
+@click.version_option('1.3')
 @click.pass_context
 def cli(ctx):
     """

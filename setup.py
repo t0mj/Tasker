@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='Tasker',
-    version='1.2',
+    version='1.3',
     py_modules=['tasks'],
     install_requires=[
         'Click',

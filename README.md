@@ -9,7 +9,7 @@ Manage your daily tasks via CLI.
 
 _task_
 -  _add_
-  - Add a new task to todays list.
+  - Add a new task to todays list or a specific day (-d YYYY-MM-DD).
 -  _browse_
   - Open browser for a task with a link.
 -  _done_
@@ -18,8 +18,11 @@ _task_
   - List todays tasks. day (-d YYYY-MM-DD) weekly (-w) monthly (-m)
 - mv
   - Move a task up/down. Can also reorganize with task values in the order you want them. (See example below)
+  - Move a task from a date (-d YYYY-MM-DD) to today or another date (-m YYYY-MM-DD).
 -  _rm_
   - Remove a task for the passed index.
+
+All commands have a `--help` command with more information.
 
 ## Install
 Clone and run `pip install .`
