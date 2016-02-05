@@ -1,5 +1,6 @@
 """
-A python app to manage daily tasks and track them over time
+A python app to manage daily tasks and track them over time.
+
 Author: Thomas Johns @t0mj
 """
 import click
@@ -225,11 +226,14 @@ def mv(tasker, task_args, task_date, move_date):
     daily_tasks = tasker.daily_tasks(task_date)
     if daily_tasks:
         dt_copy = list(daily_tasks)
+        task_idx = int(task_args[0])
+        if task_idx >= len(daily_tasks) or task_idx < 0:
+            RED('Task index out of range.')
+            return
         if move_date:
             if type(move_date) != datetime.date:
                 move_date = parse(move_date).date()
             # Get new dates tasks, append, and remove old dates task.
-            task_idx = int(task_args[0])
             move_date_tasks = tasker.daily_tasks(move_date)
             move_date_tasks.append(daily_tasks[task_idx])
             daily_tasks.pop(task_idx)
@@ -238,10 +242,8 @@ def mv(tasker, task_args, task_date, move_date):
                                                             move_date))
         elif task_args[1] in directions.keys():
             # Find index of where we're moving and overwrite with copied values
-            task_idx = int(task_args[0])
             new_loc_idx = task_idx + directions[task_args[1]]
-            if (task_idx >= len(daily_tasks) or task_idx < 0
-                    or new_loc_idx >= len(daily_tasks) or new_loc_idx < 0):
+            if (new_loc_idx >= len(daily_tasks) or new_loc_idx < 0):
                 RED('Invalid move operation.')
                 return
             daily_tasks[task_idx] = dt_copy[new_loc_idx]
