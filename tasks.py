@@ -44,6 +44,7 @@ class Tasker(object):
         # Returns a list with the task for a given day
         if type(task_date) != datetime.date:
             task_date = parse(task_date).date()
+        self.task_data.setdefault(task_date, [])
         one_days_data = self.task_data.get(task_date, [])
         if not one_days_data:
             RED('No tasks found on {}'.format(task_date))
@@ -226,20 +227,27 @@ def mv(tasker, task_args, task_date, move_date):
     daily_tasks = tasker.daily_tasks(task_date)
     if daily_tasks:
         dt_copy = list(daily_tasks)
-        task_idx = int(task_args[0])
+        task_idx = int(task_args[0]) if task_args[0] != 'unfinished' else 0
         if task_idx >= len(daily_tasks) or task_idx < 0:
             RED('Task index out of range.')
             return
         if move_date:
             if type(move_date) != datetime.date:
                 move_date = parse(move_date).date()
-            # Get new dates tasks, append, and remove old dates task.
             move_date_tasks = tasker.daily_tasks(move_date)
-            move_date_tasks.append(daily_tasks[task_idx])
-            daily_tasks.pop(task_idx)
-            GREEN('{} task {} has been moved to {}.'.format(task_date,
-                                                            task_idx,
-                                                            move_date))
+
+            if task_args[0] == 'unfinished':
+                for task in daily_tasks:
+                    if not task['complete']:
+                        task_to_move = daily_tasks.index(task)
+                        move_date_tasks.append(daily_tasks.pop(task_to_move))
+            else:
+                # Get new dates tasks, append, and remove old dates task.
+                move_date_tasks.append(daily_tasks[task_idx])
+                daily_tasks.pop(task_idx)
+                GREEN('{} task {} has been moved to {}.'.format(task_date,
+                                                                task_idx,
+                                                                move_date))
         elif task_args[1] in directions.keys():
             # Find index of where we're moving and overwrite with copied values
             new_loc_idx = task_idx + directions[task_args[1]]
